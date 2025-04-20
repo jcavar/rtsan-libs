@@ -48,9 +48,9 @@ build_xcframework:
 		-create-xcframework \
 		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib \
 		-headers $(BUILD_DIR)/rtsan_headers \
-		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib \
+		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_ios_dynamic.dylib \
 		-headers $(BUILD_DIR)/rtsan_headers \
-		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib \
+		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_iossim_dynamic.dylib \
 		-headers $(BUILD_DIR)/rtsan_headers \
 		-output $(BUILD_DIR)/lib/darwin/rtsan.xcframework
 
