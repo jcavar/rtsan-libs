@@ -54,7 +54,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: darwin_artifacts_rtsan
-        path: ./llvm-project/build/lib/darwin/{libclang_rt.,}rtsan*.{dylib,xcframework}
+        path: |
+          ./llvm-project/build/lib/darwin/libclang_rt.rtsan*.dylib
+          ./llvm-project/build/lib/darwin/rtsan.xcframework
         retention-days: 1
 
   release:
