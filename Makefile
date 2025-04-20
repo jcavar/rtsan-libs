@@ -40,16 +40,16 @@ build:
 	$(MAKE) -C $(BUILD_DIR) -j$(NUM_CORES) rtsan
 
 build_xcframework:
-	mkdir rtsan_headers
-	cp llvm-project/compiler-rt/lib/rtsan/rtsan.h rtsan_headers/
+	mkdir $(BUILD_DIR)/rtsan_headers
+	cp llvm-project/compiler-rt/lib/rtsan/rtsan.h $(BUILD_DIR)/rtsan_headers/
 	xcrun xcodebuild \
 		-create-xcframework \
 		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib \
-		-headers rtsan_headers \
+		-headers $(BUILD_DIR)/rtsan_headers \
 		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib \
-		-headers rtsan_headers \
+		-headers $(BUILD_DIR)/rtsan_headers \
 		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib \
-		-headers rtsan_headers \
+		-headers $(BUILD_DIR)/rtsan_headers \
 		-output $(BUILD_DIR)/lib/darwin/rtsan.xcframework
 
 
