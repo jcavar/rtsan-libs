@@ -32,11 +32,24 @@ configure:
 	cd $(BUILD_DIR) && cmake -G "Unix Makefiles" \
 		-DBUILD_SHARED_LIBS=OFF \
 		-DCMAKE_BUILD_TYPE=Release \
+		-DCOMPILER_RT_ENABLE_MACCATALYST=OFF \
 		-DCOMPILER_RT_BUILD_SANITIZERS=ON \
 		../compiler-rt
 
 build:
 	$(MAKE) -C $(BUILD_DIR) -j$(NUM_CORES) rtsan
+
+build_xcframework:
+	xcrun xcodebuild \
+		-create-xcframework \
+		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib \
+		-headers rtsan/include/rtsan_standalone \
+		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib \
+		-headers rtsan/include/rtsan_standalone \
+		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib \
+		-headers rtsan/include/rtsan_standalone \
+		-output $(BUILD_DIR)/lib/darwin/rtsan.xcframework
+
 
 clean:
 	rm -rf $(BUILD_DIR)
