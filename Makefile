@@ -41,6 +41,8 @@ build:
 
 build_xcframework:
 	mkdir $(BUILD_DIR)/rtsan_headers
+	# xcodebuild -xcframework -headers requires a directory
+	# To use only a single header, copy it to a separate location
 	cp llvm-project/compiler-rt/lib/rtsan/rtsan.h $(BUILD_DIR)/rtsan_headers/
 	xcrun xcodebuild \
 		-create-xcframework \
