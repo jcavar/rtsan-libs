@@ -25,6 +25,7 @@ jobs:
       run: make build
 
     - name: Build xcframework
+      if: matrix.os == 'macos-latest'
       run: make build_xcframework
 
     - name: Test
