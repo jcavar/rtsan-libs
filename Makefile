@@ -8,7 +8,7 @@ TARGET_OS := $(shell uname | tr '[:upper:]' '[:lower:]')
 TARGET_ARCH := $(shell uname -m)
 NUM_CORES := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu)
 
-.PHONY: all download extract init configure build clean test
+.PHONY: all download extract init configure build clean test build_xcframework
 
 all: init configure build
 
