@@ -64,7 +64,7 @@ jobs:
         name: darwin_artifacts_rtsan
         path: |
           ./llvm-project/build/lib/darwin/libclang_rt.rtsan*.dylib
-          ./llvm-project/build/lib/darwin/rtsan.xcframework
+          ./llvm-project/build/lib/darwin/rtsan.xcframework.zip
         retention-days: 1
 
   release:
