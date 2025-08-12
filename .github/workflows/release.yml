@@ -84,5 +84,7 @@ jobs:
         uses: AButler/upload-release-assets@v3.0
         with:
           release-tag: ${{ github.ref_name }}
-          files: ./**/libclang_rt.rtsan*
+          files: |
+            ./**/libclang_rt.rtsan*
+            ./**/rtsan.xcframework.zip
           repo-token: ${{ secrets.GITHUB_TOKEN }}
