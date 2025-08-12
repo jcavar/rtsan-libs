@@ -53,7 +53,7 @@ build_xcframework:
 		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_iossim_dynamic.dylib \
 		-headers $(BUILD_DIR)/rtsan_headers \
 		-output $(BUILD_DIR)/lib/darwin/rtsan.xcframework
-
+	zip -r $(BUILD_DIR)/lib/darwin/rtsan.xcframework.zip $(BUILD_DIR)/lib/darwin/rtsan.xcframework
 
 clean:
 	rm -rf $(BUILD_DIR)
