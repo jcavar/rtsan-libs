@@ -80,8 +80,6 @@ jobs:
         uses: actions/download-artifact@v4
       - name: List files (debug)
         run: ls -al
-      - name: List darwin (debug)
-        run: ls darwin_artifacts_rtsan -al
       - name: Create release
         uses: AButler/upload-release-assets@v3.0
         with:
