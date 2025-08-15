@@ -7,7 +7,9 @@ if [ ! -f "$LIB" ]; then
   exit 1
 fi
 
-if ! nm -a "$LIB" | grep -q "rtsan_realtime_enter"; then
+SYMBOLS=$(nm -a "$LIB") || exit 1
+
+if ! grep -q "rtsan_realtime_enter" <<< "$SYMBOLS"; then
   echo "Missing required symbol: rtsan_realtime_enter"
   exit 1
 fi
