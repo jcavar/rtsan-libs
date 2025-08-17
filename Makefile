@@ -43,7 +43,7 @@ build_xcframework:
 	mkdir $(BUILD_DIR)/rtsan_headers
 	# xcodebuild -xcframework -headers requires a directory
 	# To use only a single header, copy it to a separate location
-	cp rtsan/include/rtsan_standalone/rtsan_standalone.h $(BUILD_DIR)/rtsan_headers/
+	curl -L -o $(BUILD_DIR)/rtsan_headers/rtsan_standalone.h https://raw.githubusercontent.com/realtime-sanitizer/rtsan/main/include/rtsan_standalone/rtsan_standalone.h
 	printf '%s\n' \
 		'module rtsan {' \
 		'    header "rtsan_standalone.h"' \
