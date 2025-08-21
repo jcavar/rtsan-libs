@@ -8,7 +8,7 @@ TARGET_OS := $(shell uname | tr '[:upper:]' '[:lower:]')
 TARGET_ARCH := $(shell uname -m)
 NUM_CORES := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu)
 
-.PHONY: all download extract init configure build clean test
+.PHONY: all download extract init configure build clean test build_xcframework
 
 all: init configure build
 
@@ -32,11 +32,33 @@ configure:
 	cd $(BUILD_DIR) && cmake -G "Unix Makefiles" \
 		-DBUILD_SHARED_LIBS=OFF \
 		-DCMAKE_BUILD_TYPE=Release \
+		-DCOMPILER_RT_ENABLE_MACCATALYST=OFF \
 		-DCOMPILER_RT_BUILD_SANITIZERS=ON \
 		../compiler-rt
 
 build:
 	$(MAKE) -C $(BUILD_DIR) -j$(NUM_CORES) rtsan
+
+build_xcframework:
+	mkdir $(BUILD_DIR)/rtsan_headers
+	# xcodebuild -xcframework -headers requires a directory
+	# To use only a single header, copy it to a separate location
+	curl -L -o $(BUILD_DIR)/rtsan_headers/rtsan_standalone.h https://raw.githubusercontent.com/realtime-sanitizer/rtsan/main/include/rtsan_standalone/rtsan_standalone.h
+	printf '%s\n' \
+		'module rtsan {' \
+		'    header "rtsan_standalone.h"' \
+		'    export *' \
+		'}' >  $(BUILD_DIR)/rtsan_headers/module.modulemap
+	xcrun xcodebuild \
+		-create-xcframework \
+		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib \
+		-headers $(BUILD_DIR)/rtsan_headers \
+		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_ios_dynamic.dylib \
+		-headers $(BUILD_DIR)/rtsan_headers \
+		-library $(BUILD_DIR)/lib/darwin/libclang_rt.rtsan_iossim_dynamic.dylib \
+		-headers $(BUILD_DIR)/rtsan_headers \
+		-output $(BUILD_DIR)/lib/darwin/rtsan.xcframework
+	cd $(BUILD_DIR)/lib/darwin/ && zip -r rtsan.xcframework.zip rtsan.xcframework
 
 clean:
 	rm -rf $(BUILD_DIR)

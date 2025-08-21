@@ -24,6 +24,10 @@ jobs:
     - name: Build
       run: make build
 
+    - name: Build xcframework
+      if: matrix.os == 'macos-latest'
+      run: make build_xcframework
+
     - name: Test
       run: make test
 
@@ -58,7 +62,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: darwin_artifacts_rtsan
-        path: ./llvm-project/build/lib/darwin/libclang_rt.rtsan*.dylib
+        path: |
+          ./llvm-project/build/lib/darwin/libclang_rt.rtsan*.dylib
+          ./llvm-project/build/lib/darwin/rtsan.xcframework.zip
         retention-days: 1
 
   release:
@@ -76,5 +82,5 @@ jobs:
         uses: AButler/upload-release-assets@v3.0
         with:
           release-tag: ${{ github.ref_name }}
-          files: ./**/libclang_rt.rtsan*
+          files: ./**/libclang_rt.rtsan*;./**/rtsan.xcframework.zip
           repo-token: ${{ secrets.GITHUB_TOKEN }}
