@@ -4,7 +4,6 @@ on:
   push:
     tags: ["v*"]
 
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -31,17 +30,16 @@ jobs:
     - name: Test
       run: make test
 
-    # rename to libclang_rt.rtsan_linux_x86_64.a
-    # This makes it clear this is for linux
-    - name: Fix artifact name Ubuntu
+    # Rename from libclang_rt.rtsan-<arch>.a to libclang_rt.rtsan_linux_<arch>.a
+    - name: Rename artifact - Ubuntu
       if: contains(matrix.os, 'ubuntu')
       shell: bash
-      run: | 
+      run: |
         ARCH=$(uname -m)
         UNAME=$(uname -s | tr '[:upper:]' '[:lower:]')
         mv ./llvm-project/build/lib/linux/libclang_rt.rtsan-${ARCH}.a ./llvm-project/build/lib/linux/libclang_rt.rtsan_${UNAME}_${ARCH}.a
 
-    - name: Upload artifact - Ubuntu x86
+    - name: Upload artifact - Ubuntu x86_64
       if: contains(matrix.os, 'ubuntu') && !contains(matrix.os, 'arm')
       uses: actions/upload-artifact@v4
       with:
@@ -57,7 +55,7 @@ jobs:
         path: ./llvm-project/build/lib/linux/libclang_rt.rtsan*.a
         retention-days: 1
 
-    - name: Upload artifact Darwin
+    - name: Upload artifact - Darwin
       if: matrix.os == 'macos-latest'
       uses: actions/upload-artifact@v4
       with:
@@ -74,13 +72,25 @@ jobs:
     needs: build
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
+
       - name: List files (debug)
-        run: ls -al
+        run: find . -type f | head -50
+
+      - name: Build artifact bundle
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          make build_artifactbundle \
+            X86_64_LIB=./ubuntu_x86_artifacts_rtsan/libclang_rt.rtsan_linux_x86_64.a \
+            AARCH64_LIB=./ubuntu_arm64_artifacts_rtsan/libclang_rt.rtsan_linux_aarch64.a \
+            ARTIFACTBUNDLE_VERSION=$VERSION
+
       - name: Create release
         uses: AButler/upload-release-assets@v3.0
         with:
           release-tag: ${{ github.ref_name }}
-          files: ./**/libclang_rt.rtsan*;./**/rtsan.xcframework.zip
+          files: ./**/libclang_rt.rtsan*;./**/rtsan.xcframework.zip;./rtsan.artifactbundle.zip
           repo-token: ${{ secrets.GITHUB_TOKEN }}
